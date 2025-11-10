@@ -29,7 +29,7 @@ case "$variant" in
     ;;
 "xuanyuan")
     model="$base_name Ultra"
-    resetprop ro.odm ro.odm.mm.vibrator.audio_haptic_support "true"
+    resetprop ro.odm.mm.vibrator.audio_haptic_support "true"
     resetprop ro.odm.mm.vibrator.device_type "agm"
     resetprop ro.odm.mm.vibrator.he1.0 "mihaptic"
     resetprop ro.odm.mm.vibrator.resonant_frequency "170"
@@ -42,6 +42,9 @@ case "$variant" in
     exit 1
     ;;
 esac
+
+# Set USB config
+resetprop sys.usb.config "adb"
 
 # Set USB name
 echo "$model" >/config/usb_gadget/g1/strings/0x409/product
@@ -84,9 +87,6 @@ for prop in "${model_props[@]}"; do
     resetprop "$prop" "$model"
 done
 
-# Copy variant files
-cp -rf /vendor/variant/$variant/vendor/* /vendor
-chmod -R 755 /vendor/bin/*
-
 echo "Variant props applied for $model ($variant)." >/tmp/recovery.log
+
 exit 0
