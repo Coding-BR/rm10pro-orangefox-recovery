@@ -11,7 +11,7 @@ $(call inherit-product, $(DEVICE_PATH)/device.mk)
 
 ## Device identifier
 PRODUCT_DEVICE := sm8750
-PRODUCT_NAME := twrp_sm8750
+PRODUCT_NAME := twrp_sm8750_thales
 PRODUCT_BRAND := Xiaomi
 PRODUCT_MANUFACTURER := Xiaomi
 
