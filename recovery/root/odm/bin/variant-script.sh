@@ -30,12 +30,18 @@ set_vibrator_props() {
 case "$variant" in
 "dada")
     model="$base_name"
+    resetprop ro.twrp.device_version "Xiaomi_15"
+    resetprop ro.twrp.y_offset "111"
+    resetprop ro.twrp.h_offset "-111"
     resetprop vendor.display.enable_spr "1"
     set_vibrator_props "170" "35" "/sys/class/qcom-haptics" "agm"
     ;;
 
 "haotian")
     model="$base_name Pro"
+    resetprop ro.twrp.device_version "Xiaomi_15_Pro"
+    resetprop ro.twrp.y_offset "116"
+    resetprop ro.twrp.h_offset "-116"
     resetprop vendor.display.enable_spr "1"
     resetprop ro.odm.mm.vibrator.cirrus "true"
     resetprop ro.odm.mm.vibrator.lowPowerMode "true"
@@ -44,6 +50,9 @@ case "$variant" in
 
 "xuanyuan")
     model="$base_name Ultra"
+    resetprop ro.twrp.device_version "Xiaomi_15_Ultra"
+    resetprop ro.twrp.y_offset "116"
+    resetprop ro.twrp.h_offset "-116"
     resetprop ro.odm.mm.vibrator.he1.0 "mihaptic"
     set_vibrator_props "170" "20" "/sys/class/qcom-haptics" "agm"
     ;;
