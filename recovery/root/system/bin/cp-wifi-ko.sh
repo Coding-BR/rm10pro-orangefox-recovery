@@ -25,19 +25,26 @@ fi
 
 mkdir -p /vendor/etc/wifi/peach_v2
 
+PERSIST_ROOT=/persist
+if [ ! -d /persist ]; then
+    PERSIST_ROOT=/mnt/vendor/persist
+fi
+
 persist_mounted=0
-if ! is_mounted /persist; then
-    if mount /persist; then
+if ! is_mounted $PERSIST_ROOT; then
+    if mount $PERSIST_ROOT; then
         persist_mounted=1
     else
-        log_print "Failed to mount /persist"
+        log_print "Failed to mount $PERSIST_ROOT"
     fi
 fi
 
-cp -f /persist/wlan/wlan_mac.bin /vendor/etc/wifi/peach_v2
+if [ -f $PERSIST_ROOT/wifimac.dat ]; then
+    cp -f $PERSIST_ROOT/wifimac.dat /vendor/etc/wifi/peach_v2/wlan_mac.bin
+fi
 
 if [ $persist_mounted -eq 1 ]; then
-    umount /persist
+    umount $PERSIST_ROOT
 fi
 mkdir -p /vendor/firmware/wlan/qca_cld/peach_v2
 ln -sf /vendor/etc/wifi/peach_v2/wlan_mac.bin /vendor/firmware/wlan/qca_cld/peach_v2/wlan_mac.bin

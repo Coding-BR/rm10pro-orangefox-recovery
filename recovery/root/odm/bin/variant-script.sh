@@ -4,8 +4,8 @@
 #=================================================
 set -e
 
-variant=$(getprop ro.boot.hardware.sku)
-base_name="Xiaomi"
+variant="NX789J"
+base_name="RedMagic"
 log_file="/tmp/recovery.log"
 
 log() {
@@ -13,96 +13,12 @@ log() {
 }
 
 #-------------------------------------------------
-# Helper: set multiple vibrator-related properties
-#-------------------------------------------------
-set_vibrator_props() {
-    resetprop ro.odm.mm.vibrator.audio_haptic_support "true"
-    resetprop ro.odm.mm.vibrator.resonant_frequency "$1"
-    resetprop ro.odm.mm.vibrator.slide_effect_protect_time "$2"
-    resetprop ro.odm.mm.vibrator.sys_path "$3"
-    resetprop ro.odm.mm.vibrator.device_type "$4"
-    resetprop ro.vendor.mm.vibrator.sys_path "/sys/class/qcom-haptics"
-}
-
-#-------------------------------------------------
 # Variant-specific configuration
 #-------------------------------------------------
-case "$variant" in
-"dada")
-    model="$base_name 15"
-    resetprop ro.twrp.device_version "Xiaomi_15"
-    resetprop ro.twrp.y_offset "111"
-    resetprop ro.twrp.h_offset "-111"
-    resetprop vendor.display.enable_spr "1"
-    set_vibrator_props "170" "35" "/sys/class/qcom-haptics" "agm"
-    ;;
-
-"haotian")
-    model="$base_name 15 Pro"
-    resetprop ro.twrp.device_version "Xiaomi_15_Pro"
-    resetprop ro.twrp.y_offset "116"
-    resetprop ro.twrp.h_offset "-116"
-    resetprop vendor.display.enable_spr "1"
-    resetprop ro.odm.mm.vibrator.cirrus "true"
-    resetprop ro.odm.mm.vibrator.lowPowerMode "true"
-    set_vibrator_props "130" "20" "/sys/bus/i2c/drivers/cs40l26/0-0043" "agm"
-    ;;
-
-"xuanyuan")
-    model="$base_name 15 Ultra"
-    resetprop ro.twrp.device_version "Xiaomi_15_Ultra"
-    resetprop ro.twrp.y_offset "116"
-    resetprop ro.twrp.h_offset "-116"
-    resetprop ro.odm.mm.vibrator.he1.0 "mihaptic"
-    set_vibrator_props "170" "20" "/sys/class/qcom-haptics" "agm"
-    ;;
-
-"pudding")
-    model="$base_name 17"
-    resetprop ro.twrp.device_version "Xiaomi_17"
-    resetprop ro.twrp.y_offset "116"
-    resetprop ro.twrp.h_offset "-116"
-    resetprop ro.odm.mm.vibrator.he1.0 "mihaptic"
-    set_vibrator_props "170" "20" "/sys/class/qcom-haptics" "agm"
-    ;;
-
-"pandora")
-    model="$base_name 17 Pro"
-    resetprop ro.twrp.device_version "Xiaomi_17_Pro"
-    resetprop ro.twrp.y_offset "116"
-    resetprop ro.twrp.h_offset "-116"
-    resetprop ro.odm.mm.vibrator.he1.0 "mihaptic"
-    set_vibrator_props "170" "20" "/sys/class/qcom-haptics" "agm"
-    ;;
-
-"popsicle")
-    model="$base_name 17 Pro Max"
-    resetprop ro.twrp.device_version "Xiaomi_17_Pro_Max"
-    resetprop ro.twrp.y_offset "116"
-    resetprop ro.twrp.h_offset "-116"
-    resetprop ro.odm.mm.vibrator.he1.0 "mihaptic"
-    set_vibrator_props "170" "20" "/sys/class/qcom-haptics" "agm"
-    ;;
-
-"nezha")
-    model="$base_name 17 Ultra"
-    resetprop ro.twrp.device_version "Xiaomi_17_Ultra"
-    resetprop ro.twrp.y_offset "116"
-    resetprop ro.twrp.h_offset "-116"
-    resetprop ro.odm.mm.vibrator.he1.0 "mihaptic"
-    set_vibrator_props "170" "20" "/sys/class/qcom-haptics" "agm"
-    ;;
-
-*)
-    #-----------------------------------------
-    # Default configuration
-    #-----------------------------------------
-    log "Unknown variant: $variant, applying default configuration (SM8750)"
-    variant="SM8750"
-    model="SM8750"
-    set_vibrator_props "170" "35" "/sys/class/qcom-haptics" "agm"
-    ;;
-esac
+model="$base_name 10 Pro"
+resetprop ro.twrp.device_version "RedMagic_10_Pro"
+# Default vibrator props (generic)
+resetprop ro.odm.mm.vibrator.sys_path "/sys/class/qcom-haptics"
 
 #-------------------------------------------------
 # Common configuration
@@ -147,19 +63,6 @@ done
 for prop in "${model_props[@]}"; do
     resetprop "$prop" "$model"
 done
-
-#-------------------------------------------------
-# Copy variant-specific files
-#-------------------------------------------------
-if [ -d "/odm/variant/$variant/odm" ]; then
-    cp -rf /odm/variant/$variant/odm/* /odm
-    if [ -d "/odm/bin" ]; then
-        chmod -R 755 /odm/bin/*
-    fi
-    setprop twrp.variant.files_copied "1"
-else
-    log "Variant specific odm folder not found: /odm/variant/$variant/odm"
-fi
 
 #-------------------------------------------------
 # Done
