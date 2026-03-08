@@ -169,7 +169,7 @@ update_default_values() {
 check_dynamic() {
 	dynamic_partitions=$(getprop ro.boot.dynamic_partitions)
 	if [ "$dynamic_partitions" = "true" ]; then
-		if [[ ! -e "/dev/block/mapper/system$suffix" && ! -e "/dev/block/mapper/vendor$suffix" ]]; then
+		if [ ! -e "/dev/block/mapper/system$suffix" ] && [ ! -e "/dev/block/mapper/vendor$suffix" ]; then
 			log_print 1 "/dev/block/mapper/system$suffix and /dev/block/mapper/vendor$suffix not Found! unset suffix"
 			unset suffix
 		fi
@@ -356,7 +356,7 @@ if [ "$sdkver" -ge 26 ]; then
 					venpatchlevel=$(getprop ro.vendor.build.security_patch)
 					log_print 2 "Current Vendor Security Patch Level: $venpatchlevel"
 					venpatchlevel_device=$(grep -i -m 1 'ro.vendor.build.security_patch=' "$TEMPVEN/$BUILDPROP" | cut -f2 -d'=' -s)
-					if ! [ "$venpatchlevel" = "venpatchlevel_device" ]; then
+					if ! [ "$venpatchlevel" = "$venpatchlevel_device" ]; then
 						$setprop_bin "ro.vendor.build.security_patch" "$venpatchlevel_device"
 						sed -i "s/ro.vendor.build.security_patch=.*/ro.vendor.build.security_patch=""$venpatchlevel_device""/g" "/$DEFAULTPROP"
 						venpatchlevel_new=$(getprop ro.vendor.build.security_patch)

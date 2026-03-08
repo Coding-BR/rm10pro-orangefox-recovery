@@ -125,11 +125,7 @@ if [ -d /proc/sys/walt ]; then
 	echo 0 > /proc/sys/walt/sched_boost
 
 	# configure input boost settings
-	if [ $rev == "1.0" ] || [ $rev == "1.1" ]; then
-		echo 864000 0 0 0 0 0 0 0 > /proc/sys/walt/input_boost/input_boost_freq
-	else
-		echo 864000 0 0 0 0 0 0 0 > /proc/sys/walt/input_boost/input_boost_freq
-	fi
+	echo 864000 0 0 0 0 0 0 0 > /proc/sys/walt/input_boost/input_boost_freq
 	echo 100 > /proc/sys/walt/input_boost/input_boost_ms
 
 	# MIUI ADD: Performance_BoostFramework
@@ -160,17 +156,10 @@ if [ -d /proc/sys/walt ]; then
 	echo 11 > /sys/class/kgsl/kgsl-3d0/min_pwrlevel
         # END Performance_BoostFramework
 
-	if [ $rev == "1.0" ] || [ $rev == "1.1" ]; then
-		echo 787200 > /sys/devices/system/cpu/cpufreq/policy0/walt/rtg_boost_freq
-		echo 902400 > /sys/devices/system/cpu/cpufreq/policy6/walt/rtg_boost_freq
-		echo 1344000 > /sys/devices/system/cpu/cpufreq/policy0/walt/hispeed_freq
-		echo 2380800 > /sys/devices/system/cpu/cpufreq/policy6/walt/hispeed_freq
-	else
-		echo 787200 > /sys/devices/system/cpu/cpufreq/policy0/walt/rtg_boost_freq
-		echo 902400 > /sys/devices/system/cpu/cpufreq/policy6/walt/rtg_boost_freq
-		echo 1344000 > /sys/devices/system/cpu/cpufreq/policy0/walt/hispeed_freq
-		echo 2380800 > /sys/devices/system/cpu/cpufreq/policy6/walt/hispeed_freq
-	fi
+	echo 787200 > /sys/devices/system/cpu/cpufreq/policy0/walt/rtg_boost_freq
+	echo 902400 > /sys/devices/system/cpu/cpufreq/policy6/walt/rtg_boost_freq
+	echo 1344000 > /sys/devices/system/cpu/cpufreq/policy0/walt/hispeed_freq
+	echo 2380800 > /sys/devices/system/cpu/cpufreq/policy6/walt/hispeed_freq
 
 	echo 0 > /proc/sys/kernel/watchdog
 	echo 1 > /proc/sys/walt/sched_disable_minfreq_pause
@@ -180,15 +169,9 @@ else
 	echo 1 > /proc/sys/kernel/sched_pelt_multiplier
 fi
 
-if [ $rev == "1.0" ] || [ $rev == "1.1" ]; then
-	echo 537600 > /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq
-	echo 844800 > /sys/devices/system/cpu/cpufreq/policy6/scaling_min_freq
-	echo "0:537600 6:844800" > /data/vendor/perfd/default_scaling_min_freq
-else
-	echo 537600 > /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq
-	echo 844800 > /sys/devices/system/cpu/cpufreq/policy6/scaling_min_freq
-	echo "0:537600 6:844800" > /data/vendor/perfd/default_scaling_min_freq
-fi
+echo 537600 > /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq
+echo 844800 > /sys/devices/system/cpu/cpufreq/policy6/scaling_min_freq
+echo "0:537600 6:844800" > /data/vendor/perfd/default_scaling_min_freq
 
 # Reset the RT boost, which is 1024 (max) by default.
 echo 0 > /proc/sys/kernel/sched_util_clamp_min_rt_default

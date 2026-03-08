@@ -13,7 +13,7 @@ umount /persist
 mkdir -p /vendor/firmware/wlan/qca_cld/peach_v2
 ln -s /vendor/etc/wifi/peach_v2/wlan_mac.bin /vendor/firmware/wlan/qca_cld/peach_v2/wlan_mac.bin
 
-# 初始挂载尝试
+# Initial mount attempt.
 mount /vendor_dlkm
 mount /system_dlkm
 
@@ -26,7 +26,7 @@ log_print() {
     echo "$LOG_TAG: $1" >> /tmp/recovery.log
 }
 
-# 检查目录是否已挂载的函数
+# Function to check if a directory is mounted.
 is_mounted() {
     local dir=$1
     if mount | grep -q " on $dir "; then
@@ -36,7 +36,7 @@ is_mounted() {
     fi
 }
 
-# 挂载目录的函数
+# Function to mount a directory
 mount_directory() {
     local dir=$1
     if ! is_mounted "$dir"; then
@@ -67,7 +67,7 @@ fi
 
 chmod 0755 "$TARGET_DIR"
 
-log_print "Search and copy wifi ko files..."
+log_print "Searching and copying wifi ko files..."
 
 found_count=0
 copied_count=0
@@ -104,7 +104,7 @@ for ko_file in $KO_FILES; do
             fi
         done
         
-        # 如果文件没找到且是第一次尝试，检查并挂载目录后重试
+        # If file not found on first attempt, check and mount directories then retry
         if [ $file_found -eq 0 ] && [ $retry_count -eq 0 ]; then
             log_print "File not found in first attempt: $ko_file, checking mounts..."
             mount_attempted=0
@@ -119,7 +119,7 @@ for ko_file in $KO_FILES; do
                 fi
             done
             
-            # 如果有挂载操作且至少有一个挂载成功，则重试查找
+            # If a mount was attempted and at least one was successful, retry the search
             if [ $mount_attempted -eq 1 ] && [ $mount_success -eq 1 ]; then
                 log_print "Retrying search for $ko_file after mount operations"
                 retry_count=$((retry_count + 1))
@@ -139,7 +139,7 @@ for ko_file in $KO_FILES; do
 done
 
 log_print "Copy done: $found_count files found, $copied_count files copied."
-log_print "Target dir files:"
+log_print "Target directory files:"
 ls -la "$TARGET_DIR" 2>/dev/null | while read line; do
     log_print "$line"
 done
