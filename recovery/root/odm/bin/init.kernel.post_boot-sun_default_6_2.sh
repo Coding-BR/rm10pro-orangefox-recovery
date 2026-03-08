@@ -30,8 +30,6 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #=============================================================================
 
-rev=`cat /sys/devices/soc0/revision`
-
 # Configure RT parameters:
 # Long running RT task detection is confined to consolidated builds.
 # Set RT throttle runtime to 50ms more than long running RT
@@ -39,7 +37,6 @@ rev=`cat /sys/devices/soc0/revision`
 # Set RT throttle runtime 65% of RT throttle period.
 long_running_rt_task_ms=1200
 sched_rt_runtime_ms=`expr $long_running_rt_task_ms + 50`
-sched_rt_runtime_us=`expr $sched_rt_runtime_ms \* 1000`
 sched_rt_period_ms=`expr $sched_rt_runtime_ms + 100`
 sched_rt_period_us=`expr $sched_rt_period_ms \* 1000`
 echo $sched_rt_period_us > /proc/sys/kernel/sched_rt_period_us

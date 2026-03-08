@@ -1,26 +1,6 @@
 #!/system/bin/sh
 
-# Do not copy in fastbootd mode
-FASTBOOTD_PROP=$(getprop ro.twrp.fastbootd)
-if [ "$FASTBOOTD_PROP" = "1" ]; then
-    echo "I:cp-wifi-ko.sh: Detected fastbootd (ro.twrp.fastbootd=1), exit script." >> /tmp/recovery.log
-    exit 0
-fi
-
-mount /persist
-cp -f /persist/wlan/wlan_mac.bin /vendor/etc/wifi/peach_v2
-umount /persist
-mkdir -p /vendor/firmware/wlan/qca_cld/peach_v2
-ln -s /vendor/etc/wifi/peach_v2/wlan_mac.bin /vendor/firmware/wlan/qca_cld/peach_v2/wlan_mac.bin
-
-# Initial mount attempt.
-mount /vendor_dlkm
-mount /system_dlkm
-
 LOG_TAG="I:cp-wifi-ko.sh"
-TARGET_DIR="/odm/wifi/modules"
-SEARCH_DIRS="/vendor_dlkm /system_dlkm"
-KO_FILES="cnss_prealloc.ko cnss_nl.ko wlan_firmware_service.ko cnss_plat_ipc_qmi_svc.ko cnss_utils.ko cnss2.ko gsim.ko rmnet_mem.ko ipam.ko rfkill.ko cfg80211.ko qca_cld3_peach_v2.ko smem-mailbox.ko"
 
 log_print() {
     echo "$LOG_TAG: $1" >> /tmp/recovery.log
@@ -36,20 +16,59 @@ is_mounted() {
     fi
 }
 
+# Do not copy in fastbootd mode
+FASTBOOTD_PROP=$(getprop ro.twrp.fastbootd)
+if [ "$FASTBOOTD_PROP" = "1" ]; then
+    log_print "Detected fastbootd (ro.twrp.fastbootd=1), exit script."
+    exit 0
+fi
+
+mkdir -p /vendor/etc/wifi/peach_v2
+
+persist_mounted=0
+if ! is_mounted /persist; then
+    if mount /persist; then
+        persist_mounted=1
+    else
+        log_print "Failed to mount /persist"
+    fi
+fi
+
+cp -f /persist/wlan/wlan_mac.bin /vendor/etc/wifi/peach_v2
+
+if [ $persist_mounted -eq 1 ]; then
+    umount /persist
+fi
+mkdir -p /vendor/firmware/wlan/qca_cld/peach_v2
+ln -sf /vendor/etc/wifi/peach_v2/wlan_mac.bin /vendor/firmware/wlan/qca_cld/peach_v2/wlan_mac.bin
+
+# Initial mount attempt.
+mount /vendor_dlkm
+mount /system_dlkm
+
+TARGET_DIR="/odm/wifi/modules"
+SEARCH_DIRS="/vendor_dlkm /system_dlkm"
+KO_FILES="cnss_prealloc.ko cnss_nl.ko wlan_firmware_service.ko cnss_plat_ipc_qmi_svc.ko cnss_utils.ko cnss2.ko gsim.ko rmnet_mem.ko ipam.ko rfkill.ko cfg80211.ko qca_cld3_peach_v2.ko smem-mailbox.ko"
+
 # Function to mount a directory
 mount_directory() {
     local dir=$1
     if ! is_mounted "$dir"; then
-        sleep 10
         log_print "Mounting $dir"
         mount "$dir"
         if [ $? -eq 0 ]; then
             log_print "Successfully mounted $dir"
             return 0
-        else
-            log_print "Failed to mount $dir"
-            return 1
         fi
+        sleep 2
+        log_print "Retrying mount $dir..."
+        mount "$dir"
+        if [ $? -eq 0 ]; then
+            log_print "Successfully mounted $dir"
+            return 0
+        fi
+        log_print "Failed to mount $dir"
+        return 1
     else
         log_print "$dir is already mounted"
         return 0
@@ -80,7 +99,7 @@ for ko_file in $KO_FILES; do
     while [ $retry_count -le $max_retries ] && [ $file_found -eq 0 ]; do
         for search_dir in $SEARCH_DIRS; do
             if [ -d "$search_dir" ]; then
-                file_path=$(find "$search_dir" -type f -name "$ko_file" 2>/dev/null | head -1)
+                file_path=$(find "$search_dir" -type f -name "$ko_file" 2>/dev/null | head -n 1)
                 if [ -n "$file_path" ] && [ -f "$file_path" ]; then
                     file_found=1
                     target_file="$TARGET_DIR/$ko_file"

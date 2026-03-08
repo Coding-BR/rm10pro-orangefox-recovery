@@ -151,9 +151,15 @@ done
 #-------------------------------------------------
 # Copy variant-specific files
 #-------------------------------------------------
-cp -rf /odm/variant/$variant/odm/* /odm
-chmod -R 755 /odm/bin/*
-setprop twrp.variant.files_copied "1"
+if [ -d "/odm/variant/$variant/odm" ]; then
+    cp -rf /odm/variant/$variant/odm/* /odm
+    if [ -d "/odm/bin" ]; then
+        chmod -R 755 /odm/bin/*
+    fi
+    setprop twrp.variant.files_copied "1"
+else
+    log "Variant specific odm folder not found: /odm/variant/$variant/odm"
+fi
 
 #-------------------------------------------------
 # Done

@@ -5,7 +5,7 @@
 - [X] ADB
 - [X] Decryption
 - [X] Display
-- [X] Fasbootd
+- [X] Fastbootd
 - [X] Flashing
 - [X] MTP
 - [X] Sideload
