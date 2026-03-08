@@ -41,3 +41,7 @@ TWRP_REQUIRED_MODULES += \
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \
     $(DEVICE_PATH)
+
+# fstab
+PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/recovery.fstab:$(TARGET_COPY_OUT_RECOVERY)/root/system/etc/recovery.fstab
