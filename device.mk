@@ -46,9 +46,9 @@ PRODUCT_SOONG_NAMESPACES += \
 # fstab — copied to both recovery root and vendor ramdisk for first-stage init
 PRODUCT_COPY_FILES += \
     $(DEVICE_PATH)/recovery.fstab:$(TARGET_COPY_OUT_RECOVERY)/root/system/etc/recovery.fstab \
-    $(DEVICE_PATH)/recovery.fstab:$(TARGET_VENDOR_RAMDISK_OUT)/first_stage_ramdisk/fstab.sun
-    $(DEVICE_PATH)/recovery/root/vendor/etc/vintf/manifest.xml:$
-(TARGET_COPY_OUT_RECOVERY)/root/vendor/etc/vintf/manifest.xml
+    $(DEVICE_PATH)/recovery.fstab:$(TARGET_VENDOR_RAMDISK_OUT)/first_stage_ramdisk/fstab.sun \
+    $(DEVICE_PATH)/recovery/root/vendor/etc/vintf/manifest.xml:$(
+TARGET_COPY_OUT_RECOVERY)/root/vendor/etc/vintf/manifest.xml
 
 # Init scripts
 PRODUCT_COPY_FILES += \
