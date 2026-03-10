@@ -2,21 +2,40 @@
     Input:
         device/qcom/sun/manifest_sun.xml
 -->
-<manifest version="8.0" type="device">
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- VINTF manifest for TWRP recovery -->
+<!-- Device: Nubia RedMagic 10 Pro (NX789J) -->
+<!-- Platform: Snapdragon 8 Elite (sun) / Android 15 -->
+<manifest version="2.0" type="device" target-level="8">
+
+    <!-- KeyMint - required for /data ICE wrappedkey decryption -->
+    <hal format="aidl">
+        <name>android.hardware.security.keymint</name>
+        <fqname>IKeyMintDevice/default</fqname>
+    </hal>
+
+    <!-- Gatekeeper - required for credential-encrypted key derivation -->
     <hal format="aidl">
         <name>android.hardware.gatekeeper</name>
         <fqname>IGatekeeper/default</fqname>
     </hal>
+
+    <!-- Secure Element - ST54L NFC/SE chip present on NX789J -->
     <hal format="aidl">
         <name>android.hardware.secure_element</name>
         <fqname>ISecureElement/eSE1</fqname>
     </hal>
+
+    <!-- NFC - ST NFC controller present on NX789J -->
     <hal format="aidl">
         <name>android.hardware.nfc</name>
         <fqname>INfc/default</fqname>
     </hal>
+
+    <!-- NXP NFC vendor extension - present per proprietary-files.txt -->
     <hal format="aidl">
         <name>vendor.nxp.nxpnfc_aidl</name>
         <fqname>INxpNfc/default</fqname>
     </hal>
+
 </manifest>
