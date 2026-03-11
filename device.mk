@@ -27,6 +27,8 @@ PRODUCT_SHIPPING_API_LEVEL := 35
 
 # Dynamic partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
+# Required for Android 15 CrashRecovery APEX
+PRODUCT_APEX_SYSTEM_SERVER_JARS += com.android.crashrecovery:service-crashrecovery
 
 # Enable Fuse Passthrough
 PRODUCT_PROPERTY_OVERRIDES += persist.sys.fuse.passthrough.enable=true
@@ -47,8 +49,7 @@ PRODUCT_SOONG_NAMESPACES += \
 PRODUCT_COPY_FILES += \
     $(DEVICE_PATH)/recovery.fstab:$(TARGET_COPY_OUT_RECOVERY)/root/system/etc/recovery.fstab \
     $(DEVICE_PATH)/recovery.fstab:$(TARGET_VENDOR_RAMDISK_OUT)/first_stage_ramdisk/fstab.sun \
-    $(DEVICE_PATH)/recovery/root/vendor/etc/vintf/manifest.xml:$(
-TARGET_COPY_OUT_RECOVERY)/root/vendor/etc/vintf/manifest.xml
+    $(DEVICE_PATH)/recovery/root/vendor/etc/vintf/manifest.xml:$(TARGET_COPY_OUT_RECOVERY)/root/vendor/etc/vintf/manifest.xml
 
 # Init scripts
 PRODUCT_COPY_FILES += \
