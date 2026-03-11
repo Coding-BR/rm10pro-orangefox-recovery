@@ -188,3 +188,4 @@ TW_CUSTOM_CPU_TEMP_PATH := "/sys/class/thermal/thermal_zone1/temp"
 TW_BACKUP_EXCLUSIONS := /data/fonts
 # Sepolicy
 BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor
+TW_HAS_USB_OTG := true
