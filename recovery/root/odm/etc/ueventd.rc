@@ -68,3 +68,7 @@ external_firmware_handler /devices/platform/soc/soc:gh-secure-vm-loader@1/firmwa
 # ST NFC
 /dev/st54j              0660   nfc        nfc
 /dev/st21nfc              0660   nfc        nfc
+
+# Goodix THP touch
+/dev/thp                  0666   system     system
+/dev/input_agent          0666   system     system
