@@ -3,6 +3,7 @@ on post-fs-data
     chmod 666 /dev/thp
     chown system system /dev/input_agent
     chmod 666 /dev/input_agent
+    start ztethp
 
 service ztethp /vendor/bin/odm_tsc
     class core
