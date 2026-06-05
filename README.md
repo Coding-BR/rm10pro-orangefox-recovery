@@ -9,7 +9,7 @@
 
 ---
 
-# ""h"" 
+# "Dont use the auto build script for now cause its broken and soon to be fixed" 
 
 ## Device Specifications
 
