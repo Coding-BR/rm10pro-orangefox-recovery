@@ -24,14 +24,14 @@ on:
 
 jobs:
   build:
-    name: Build OrangeFox for NX789J
+    name: Build OrangeFox for NX809J
     runs-on: ubuntu-22.04
 
     steps:
       - name: Check out device tree
         uses: actions/checkout@v4
         with:
-          path: device/nubia/NX789J
+          path: device/nubia/NX809J
 
       - name: Free up disk space
         run: |
@@ -87,32 +87,32 @@ jobs:
       - name: Place device tree
         run: |
           mkdir -p ~/fox_${{ inputs.SYNC_BRANCH }}/device/nubia
-          cp -r $GITHUB_WORKSPACE/device/nubia/NX789J ~/fox_${{ inputs.SYNC_BRANCH }}/device/nubia/NX789J
+          cp -r $GITHUB_WORKSPACE/device/nubia/NX809J ~/fox_${{ inputs.SYNC_BRANCH }}/device/nubia/NX809J
 
       - name: Build OrangeFox
         run: |
           cd ~/fox_${{ inputs.SYNC_BRANCH }}
           source build/envsetup.sh
-          lunch orangefox_NX789J-ap2a-${{ inputs.BUILD_TYPE }}
+          lunch orangefox_NX809J-${{ inputs.BUILD_TYPE }}
           mka adbd recoveryimage 2>&1 | tee build.log
           echo "BUILD_EXIT=${PIPESTATUS[0]}" >> $GITHUB_ENV
 
       - name: Check build output
         run: |
-          if [ ! -f ~/fox_${{ inputs.SYNC_BRANCH }}/out/target/product/NX789J/recovery.img ]; then
+          if [ ! -f ~/fox_${{ inputs.SYNC_BRANCH }}/out/target/product/NX809J/recovery.img ]; then
             echo "Build failed - recovery.img not found"
             exit 1
           fi
           echo "Build successful!"
-          ls -lh ~/fox_${{ inputs.SYNC_BRANCH }}/out/target/product/NX789J/recovery.img
+          ls -lh ~/fox_${{ inputs.SYNC_BRANCH }}/out/target/product/NX809J/recovery.img
 
       - name: Rename output
         run: |
           DATE=$(date +%Y%m%d)
-          cp ~/fox_${{ inputs.SYNC_BRANCH }}/out/target/product/NX789J/recovery.img \
-             ~/OrangeFox-${{ inputs.SYNC_BRANCH }}-NX789J-$DATE.img
-          echo "IMG_PATH=$HOME/OrangeFox-${{ inputs.SYNC_BRANCH }}-NX789J-$DATE.img" >> $GITHUB_ENV
-          echo "IMG_NAME=OrangeFox-${{ inputs.SYNC_BRANCH }}-NX789J-$DATE.img" >> $GITHUB_ENV
+          cp ~/fox_${{ inputs.SYNC_BRANCH }}/out/target/product/NX809J/recovery.img \
+             ~/OrangeFox-${{ inputs.SYNC_BRANCH }}-NX809J-$DATE.img
+          echo "IMG_PATH=$HOME/OrangeFox-${{ inputs.SYNC_BRANCH }}-NX809J-$DATE.img" >> $GITHUB_ENV
+          echo "IMG_NAME=OrangeFox-${{ inputs.SYNC_BRANCH }}-NX809J-$DATE.img" >> $GITHUB_ENV
 
       - name: Upload recovery image as artifact
         uses: actions/upload-artifact@v4
@@ -134,28 +134,23 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: OFR-${{ inputs.SYNC_BRANCH }}-${{ github.run_number }}
-          name: OrangeFox ${{ inputs.SYNC_BRANCH }} — NX789J Build ${{ github.run_number }}
+          name: OrangeFox ${{ inputs.SYNC_BRANCH }} - NX809J Build ${{ github.run_number }}
           body: |
-            ## OrangeFox Recovery for Nubia RedMagic 10 Pro (NX789J)
+            ## OrangeFox Recovery for REDMAGIC 11 Pro (NX809J)
 
             **Branch:** ${{ inputs.SYNC_BRANCH }}
             **Build type:** ${{ inputs.BUILD_TYPE }}
             **Date:** ${{ github.run_number }}
 
-            ### Flashing Instructions
+            ### RAM Boot Test Only
             ```bash
-            adb push OrangeFox-*.img /sdcard/recovery.img
-            adb shell dd if=/sdcard/recovery.img of=/dev/block/bootdevice/by-name/recovery_a
-            adb shell dd if=/sdcard/recovery.img of=/dev/block/bootdevice/by-name/recovery_b
-            adb reboot recovery
+            adb reboot bootloader
+            fastboot boot OrangeFox-*.img
             ```
 
             ### Status
-            - ✅ OrangeFox UI
-            - ✅ Touch
-            - ✅ ADB
-            - ✅ Decryption (FBE)
-            - ✅ Flashing ZIPs
+            - Experimental NX809J build
+            - Boot from RAM only until tested
           files: ${{ env.IMG_PATH }}
           draft: false
           prerelease: ${{ inputs.BUILD_TYPE != 'userdebug' }}

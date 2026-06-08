@@ -4,9 +4,12 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/orangefox_NX789J.mk
+    $(LOCAL_DIR)/orangefox_NX809J.mk \
+    $(LOCAL_DIR)/twrp_NX809J.mk
 
 COMMON_LUNCH_CHOICES := \
-    orangefox_NX789J-eng \
-    orangefox_NX789J-userdebug
+    orangefox_NX809J-eng \
+    orangefox_NX809J-userdebug \
+    twrp_NX809J-eng \
+    twrp_NX809J-userdebug
 

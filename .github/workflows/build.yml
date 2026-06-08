@@ -1,4 +1,4 @@
-name: TWRP 16 Builder - NX789J
+name: TWRP 16 Builder
 
 on:
   workflow_dispatch:
@@ -12,23 +12,23 @@ on:
         required: true
         default: "twrp-16.0"
       DEVICE_TREE_URL:
-        description: "Device tree url"
-        required: true
-        default: "https://github.com/reminon/twrp_device_nubia_nx789j"
+        description: "Device tree url. Leave empty to build this repository as the device tree."
+        required: false
+        default: ""
       DEVICE_TREE_BRANCH:
-        description: "Device tree branch"
-        required: true
-        default: "twrp-16.0"
+        description: "Device tree branch, used only when DEVICE_TREE_URL is set"
+        required: false
+        default: "main"
       DEVICE_PATH:
         description: "Device path device/"
         required: true
-        default: "nubia/nx789j"
+        default: "nubia/NX809J"
       DEVICE_NAME:
         description: "Device name"
         required: true
-        default: "nx789j"
+        default: "NX809J"
       LUNCH_TARGET:
-        description: "lunch twrp_ (default same as device name)"
+        description: "lunch suffix after twrp_ (default DEVICE_NAME-eng)"
         required: false
         default: ""
       BUILD_PARTITION:
@@ -47,7 +47,7 @@ jobs:
         if [ -n "${{ github.event.inputs.LUNCH_TARGET }}" ]; then
           echo "LUNCH_TARGET=${{ github.event.inputs.LUNCH_TARGET }}" >> "$GITHUB_ENV"
         else
-          echo "LUNCH_TARGET=${{ github.event.inputs.DEVICE_NAME }}" >> "$GITHUB_ENV"
+          echo "LUNCH_TARGET=${{ github.event.inputs.DEVICE_NAME }}-eng" >> "$GITHUB_ENV"
         fi
         {
           echo 'BUILD_INFO<<EOF'
@@ -100,12 +100,29 @@ jobs:
         repo init -u ${{ github.event.inputs.TWRP_MANIFEST_URL }} -b ${{ github.event.inputs.TWRP_MANIFEST_BRANCH }} --depth=1
         (while true; do echo "Syncing source..."; sleep 60; done) &
         TIP_PID=$!
-        repo sync
+        repo sync -c --no-tags --force-sync --optimized-fetch --prune -j$(nproc --all)
         kill $TIP_PID && exit 0
 
-    - name: Setup device
+    - name: Check out local device tree
+      if: ${{ github.event.inputs.DEVICE_TREE_URL == '' }}
+      uses: actions/checkout@v4
+      with:
+        path: device/${{ github.event.inputs.DEVICE_PATH }}
+
+    - name: Clone external device tree
+      if: ${{ github.event.inputs.DEVICE_TREE_URL != '' }}
       run: |
         git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} device/${{ github.event.inputs.DEVICE_PATH }}
+
+    - name: Validate device tree
+      run: |
+        test -f AndroidProducts.mk || { echo "AndroidProducts.mk not found in device tree"; exit 1; }
+        test -f BoardConfig.mk || { echo "BoardConfig.mk not found in device tree"; exit 1; }
+        if [ "${{ github.event.inputs.DEVICE_NAME }}" = "NX809J" ] && grep -R "NX789J" -n Android.mk AndroidProducts.mk BoardConfig.mk device.mk *.mk recovery.fstab system.prop; then
+          echo "This still contains NX789J references. Port the tree to NX809J before building."
+          exit 1
+        fi
+      working-directory: device/${{ github.event.inputs.DEVICE_PATH }}
 
     - name: Generate build info
       run: |

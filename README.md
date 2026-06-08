@@ -1,154 +1,123 @@
-# OrangeFox Recovery — Nubia RedMagic 10 Pro (NX789J)
+# TWRP / OrangeFox Recovery - REDMAGIC 11 Pro (NX809J)
 
-> First working OrangeFox build for the RedMagic 10 Pro, including functional decryption.
+Experimental recovery device tree for the REDMAGIC 11 Pro (`NX809J`), generated
+from a rooted device running Android 16 / REDMAGIC OS 11.
 
-![OrangeFox](https://img.shields.io/badge/OrangeFox-14.1-orange?style=flat-square)
-![Device](https://img.shields.io/badge/Device-RedMagic%2010%20Pro-red?style=flat-square)
-![Status](https://img.shields.io/badge/Status-Working-brightgreen?style=flat-square)
-![Decryption](https://img.shields.io/badge/Decryption-Working-brightgreen?style=flat-square)
+![Device](https://img.shields.io/badge/Device-REDMAGIC%2011%20Pro-red?style=flat-square)
+![Status](https://img.shields.io/badge/Status-Experimental-yellow?style=flat-square)
+![Android](https://img.shields.io/badge/Android-16-green?style=flat-square)
 
----
+## Safety
 
-# "Dont use the github action for now cause its broken and soon to be fixed" 
+This tree is not proven booting yet. Test builds from RAM only (`fastboot boot`
+if the bootloader allows it). Do not flash test images to `recovery_a` or
+`recovery_b` until boot, display, touch, ADB, and partition mounting are
+confirmed.
 
-## Device Specifications
+## Device
 
 | Feature | Details |
 |---------|---------|
-| Device | Nubia RedMagic 10 Pro |
-| Codename | NX789J |
-| SoC | Snapdragon 8 Elite (sun) |
+| Device | REDMAGIC 11 Pro |
+| Codename | NX809J |
+| Product | NX809J-UN |
+| Platform | canoe |
+| Android | 16 |
 | Architecture | arm64 |
 | A/B Partitions | Yes |
-| Dynamic Partitions | Yes |
-| Encryption | FBE (fscrypt policy 2) |
-| Recovery Partition | Yes (`recovery_a` / `recovery_b`) |
+| Dynamic Partitions | Yes, `qti_dynamic_partitions` |
+| Recovery Partition | Yes, `recovery_a` / `recovery_b` |
 
----
-
-## Status
+## Current Status
 
 | Feature | Status |
 |---------|--------|
-| OrangeFox UI | ✅ Working |
-| Touch | ✅ Working |
-| ADB | ✅ Working |
-| Decryption (FBE) | ✅ Working |
-| Flashing ZIPs | ✅ Working |
-| Backup / Restore | ✅ Working |
-| Fastbootd | ✅ Working |
-| USB OTG | ✅ Working |
-| Vibration | ⚠️ Disabled in recovery (not needed) |
+| Build config | Prepared |
+| GitHub Actions | Prepared |
+| Boot from RAM | Untested |
+| Display | Untested |
+| Touch | Untested |
+| ADB | Untested |
+| Decryption | Untested |
+| Fastbootd | Untested |
+| USB OTG | Untested |
 
----
+## Source Data
 
-## Notes
+The active slot on the connected phone was `_b`. These files were dumped or read
+from the device and used for the port:
 
-This device tree was converted from the TWRP tree and required several non-trivial fixes to get working on OFR 14.1 against Android 15 prebuilt binaries:
+- `boot_b.img`
+- `vendor_boot_b.img`
+- `init_boot_b.img`
+- `dtbo_b.img`
+- `recovery_b.img`
+- `vbmeta_b.img`
+- `vbmeta_system_b.img`
+- `/vendor/etc/fstab.qcom`
+- VINTF manifests from `/vendor`, `/odm`, and `/system`
+- Android 16 keystore libraries from `/system/lib64`
 
-- VINTF manifest version downgraded from 9.0 → 1.0 for compatibility with `libvintf@8.0`
-- System `keystore2` binary and libraries replaced with Android 15 versions pulled from the live system to fix decryption
-- `init.recovery.qcom.rc` haptic service disabled to prevent ueventd firmware retry loop
-- `vendor/orangefox` config path remapped to `vendor/twrp` (OFR 14.1 sync layout)
-- ODM directory conflict in recovery root resolved
-- `OF_TARGET_DEVICES` renamed to `FOX_TARGET_DEVICES`
+Local dumps are kept under `stock/NX809J/` and are ignored by Git.
 
----
+## Building TWRP With GitHub Actions
 
-## Building
+Use `.github/workflows/build.yml`.
 
-### Requirements
+- `DEVICE_TREE_URL`: leave empty to build this repository
+- `DEVICE_PATH`: `nubia/NX809J`
+- `DEVICE_NAME`: `NX809J`
+- `LUNCH_TARGET`: leave empty, or set `NX809J`
+- `BUILD_PARTITION`: `recovery`
 
-- Ubuntu 20.04 / 22.04 / 24.04
-- At least 16GB RAM
-- At least 150GB free disk space
-- OpenJDK 11
+The output artifact should be named like:
 
-### Install dependencies
-
-```bash
-sudo apt update && sudo apt install -y \
-  git curl wget python3 python-is-python3 \
-  bc bison build-essential ccache flex \
-  g++-multilib gcc-multilib gnupg gperf \
-  imagemagick lib32ncurses-dev lib32readline-dev \
-  lib32z1-dev lz4 libncurses-dev libsdl1.2-dev \
-  libssl-dev libwxgtk3.2-dev libxml2-dev \
-  libxml2-utils lzop pngcrush rsync schedtool \
-  squashfs-tools xsltproc zip zlib1g-dev openjdk-11-jdk
+```text
+TWRP-3.7.1-16-NX809J-YYYY-MM-DD.img
 ```
 
-### Sync OrangeFox source
+## Building OrangeFox With GitHub Actions
+
+Use `.github/workflows/build-orangefox.yml`.
+
+Default build target:
+
+```bash
+lunch orangefox_NX809J-eng
+mka adbd recoveryimage
+```
+
+## Manual Build
 
 ```bash
 git clone https://gitlab.com/OrangeFox/sync.git ~/OrangeFox_sync
 cd ~/OrangeFox_sync
 ./orangefox_sync.sh --branch 14.1 --path ~/fox_14.1
-```
 
-### Place device tree
-
-```bash
 mkdir -p ~/fox_14.1/device/nubia
-git clone https://github.com/YOUR_USERNAME/android_device_nubia_NX789J ~/fox_14.1/device/nubia/NX789J
-```
+git clone https://github.com/YOUR_USERNAME/android_device_nubia_NX809J \
+  ~/fox_14.1/device/nubia/NX809J
 
-### Build
-
-```bash
 cd ~/fox_14.1
 source build/envsetup.sh
-lunch orangefox_NX789J-ap2a-eng
+lunch orangefox_NX809J-eng
 mka adbd recoveryimage
 ```
 
-Output will be at:
+Output:
+
+```text
+out/target/product/NX809J/recovery.img
 ```
-out/target/product/NX789J/recovery.img
-```
 
----
+## Testing
 
-## Flashing
-
-> ⚠️ This device does **not** support `fastboot boot` or `fastboot flash recovery`. Use the method below.
-
-### From a running recovery (TWRP or OrangeFox)
+Prefer RAM boot testing only:
 
 ```bash
-adb push recovery.img /sdcard/recovery.img
-adb shell dd if=/sdcard/recovery.img of=/dev/block/bootdevice/by-name/recovery_a
-adb shell dd if=/sdcard/recovery.img of=/dev/block/bootdevice/by-name/recovery_b
-adb reboot recovery
+adb reboot bootloader
+fastboot boot recovery.img
 ```
 
-### From Android (requires root)
-
-```bash
-adb push recovery.img /sdcard/recovery.img
-adb shell su -c "dd if=/sdcard/recovery.img of=/dev/block/bootdevice/by-name/recovery_a"
-adb shell su -c "dd if=/sdcard/recovery.img of=/dev/block/bootdevice/by-name/recovery_b"
-adb reboot recovery
-```
-
----
-
-## Credits
-
-- [OrangeFox Recovery Project](https://orangefox.download)
-- [TeamWin (TWRP)](https://twrp.me) — original device tree base
-- Converted and fixed by **YOUR_NAME**
-
----
-
-## License
-
-```
-Copyright (C) 2025 The Android Open Source Project
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-```
+If `fastboot boot` is unsupported on this bootloader, do not flash blindly. Keep a
+known-good EDL/stock restore path before any partition write tests.

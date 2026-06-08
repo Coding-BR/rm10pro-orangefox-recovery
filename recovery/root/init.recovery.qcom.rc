@@ -27,7 +27,7 @@
 
 on init
     stop keystore2
-    stop vendor.keymint-qti
+    stop vendor.keymint
     start vendor.boot-qti
     setprop prepdecrypt.setpatch true
 
@@ -64,14 +64,12 @@ on property:twrp.modules.loaded=true
     symlink /firmware /vendor/firmware_mnt
 
 on property:ro.crypto.state=encrypted && property:ro.boot.dynamic_partitions=true
-    start odm.prepdecrypt
+    start vendor.qseecomd
+    start vendor.keymint
+    start vendor.gatekeeper_default
 
 on property:twrp.variant.files_copied=1
-    start odm.vibratorfeature-service
-    start odm.touch_report
-    start odm.weaver-service
-    start odm.keymint-strongbox
-    start odm.se_omapi
+    start vendor.secretkeeper
 
 on property:servicemanager.ready=true
     setprop sys.boot_completed 1

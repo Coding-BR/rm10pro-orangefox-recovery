@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-DEVICE_PATH := device/nubia/NX789J
+DEVICE_PATH := device/nubia/NX809J
 
 # Building with minimal manifest
 ALLOW_MISSING_DEPENDENCIES := true
@@ -28,15 +28,15 @@ ENABLE_CPUSETS := true
 ENABLE_SCHEDBOOST := true
 
 # Bootloader
-PRODUCT_PLATFORM := sun
-TARGET_BOOTLOADER_BOARD_NAME := sun
+PRODUCT_PLATFORM := canoe
+TARGET_BOOTLOADER_BOARD_NAME := canoe
 TARGET_NO_BOOTLOADER := true
 TARGET_USES_UEFI := true
 
 # Platform
-TARGET_BOARD_PLATFORM := sun
-TARGET_BOARD_PLATFORM_GPU := qcom-adreno830
-QCOM_BOARD_PLATFORMS += sun
+TARGET_BOARD_PLATFORM := canoe
+TARGET_BOARD_PLATFORM_GPU := qcom-adreno840
+QCOM_BOARD_PLATFORMS += canoe
 
 # Kernel
 TARGET_KERNEL_ARCH := arm64
@@ -64,11 +64,11 @@ AB_OTA_PARTITIONS += \
     vbmeta \
     vbmeta_system \
     odm \
-    odm_dlkm \
     product \
     system \
     system_ext \
     system_dlkm \
+    pvmfw \
     vendor \
     vendor_dlkm
 
@@ -93,25 +93,26 @@ BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 104857600
 BOARD_BOOTIMAGE_PARTITION_SIZE := 100663296
 BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE := 100663296
-BOARD_DTBOIMG_PARTITION_SIZE := 25165824
+BOARD_DTBOIMG_PARTITION_SIZE := 75497472
 BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE := 8388608
 
 # Dynamic Partitions
-BOARD_SUPER_PARTITION_SIZE := 17179869184
-BOARD_SUPER_PARTITION_GROUPS := nubia_dynamic_partitions
-BOARD_NUBIA_DYNAMIC_PARTITIONS_SIZE := 17175674880
-BOARD_NUBIA_DYNAMIC_PARTITIONS_PARTITION_LIST := \
+BOARD_SUPER_PARTITION_SIZE := 19327352832
+BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
+BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 19323158528
+BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := \
     system \
     system_ext \
     product \
     vendor \
     vendor_dlkm \
     odm \
-    odm_dlkm
+    system_dlkm
 
 # File systems
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
+TARGET_USERIMAGES_USE_EROFS := true
 
 # Extras
 TARGET_SYSTEM_PROP += $(DEVICE_PATH)/system.prop
@@ -156,10 +157,10 @@ TW_USE_TOOLBOX := true
 TARGET_USES_MKE2FS := true
 TW_INCLUDE_FUSE_EXFAT := true
 TW_INCLUDE_FUSE_NTFS := true
-TW_INPUT_BLACKLIST := "hbtp_vm:goodix_fp:nubia_tgk_aw_sar0_ch0:nubia_tgk_aw_sar1_ch0:sun-mtp-snd-card Headset Jack:sun-mtp-snd-card Button Jack"
+TW_INPUT_BLACKLIST := "goodix_fp:nubia_tgk_aw_sar0_ch0:nubia_tgk_aw_sar1_ch0:canoe-mtp-wsa884x-snd-card Headset Jack:canoe-mtp-wsa884x-snd-card Button Jack"
 TW_BRIGHTNESS_PATH := "/sys/class/backlight/panel0-backlight/brightness"
-TW_MAX_BRIGHTNESS := 2047
-TW_DEFAULT_BRIGHTNESS := 250
+TW_MAX_BRIGHTNESS := 8190
+TW_DEFAULT_BRIGHTNESS := 1500
 TW_EXTRA_LANGUAGES := true
 TW_EXCLUDE_APEX := true
 TW_HAS_EDL_MODE := false
@@ -168,7 +169,7 @@ TW_SUPPORT_INPUT_AIDL_HAPTICS_FQNAME := "android.hardware.vibrator.IVibrator/vib
 TW_SUPPORT_INPUT_AIDL_HAPTICS_FIX_OFF := true
 TW_USE_SERIALNO_PROPERTY_FOR_DEVICE_ID := true
 TW_SCREEN_BLANK_ON_BOOT := true
-TW_LOAD_VENDOR_MODULES := "drm_display_helper.ko msm_drm.ko panel_event_notifier.ko zte_tpd.ko smartpa_stat_dlkm.ko aw882xx_dlkm.ko aw9620x.ko"
+TW_LOAD_VENDOR_MODULES := "drm_display_helper.ko msm_drm.ko panel_event_notifier.ko zte_tpd.ko smartpa_stat_dlkm.ko aw882xx_dlkm.ko aw9620x.ko qca_cld3_peach_v2.ko"
 TW_LOAD_VENDOR_MODULES_EXCLUDE_GKI := true
 TW_LOAD_PREBUILT_MODULES_AT_FIRST := true
 TW_CUSTOM_CPU_TEMP_PATH := "/sys/class/thermal/thermal_zone1/temp"
@@ -178,9 +179,9 @@ TW_CUSTOM_BATTERY_PATH := "/sys/class/power_supply/battery"
 
 # OrangeFox specific
 OF_MAINTAINER := YourName
-OF_DEVICE_NAME := NX789J
-FOX_TARGET_DEVICES := NX789J
-OF_SCREEN_H := 2772
+OF_DEVICE_NAME := NX809J
+FOX_TARGET_DEVICES := NX809J
+OF_SCREEN_H := 2688
 OF_STATUS_H := 100
 OF_STATUS_INDENT_LEFT := 48
 OF_STATUS_INDENT_RIGHT := 48
@@ -200,17 +201,17 @@ TW_INCLUDE_FBE_METADATA_DECRYPT := true
 BOARD_USES_QCOM_FBE_DECRYPTION := true
 BOARD_USES_METADATA_PARTITION := true
 TW_USE_FSCRYPT_POLICY := 2
-PLATFORM_VERSION := 99.87.36
+PLATFORM_VERSION := 16
 PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
-PLATFORM_SECURITY_PATCH := 2099-12-31
+PLATFORM_SECURITY_PATCH := 2026-03-01
 VENDOR_SECURITY_PATCH := $(PLATFORM_SECURITY_PATCH)
 BOOT_SECURITY_PATCH := $(PLATFORM_SECURITY_PATCH)
 
 # OrangeFox specific
 OF_MAINTAINER := YourName
-OF_DEVICE_NAME := NX789J
-FOX_TARGET_DEVICES := NX789J
-OF_SCREEN_H := 2772
+OF_DEVICE_NAME := NX809J
+FOX_TARGET_DEVICES := NX809J
+OF_SCREEN_H := 2688
 OF_STATUS_H := 100
 OF_STATUS_INDENT_LEFT := 48
 OF_STATUS_INDENT_RIGHT := 48
