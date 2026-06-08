@@ -11,5 +11,7 @@ COMMON_LUNCH_CHOICES := \
     orangefox_NX809J-eng \
     orangefox_NX809J-userdebug \
     twrp_NX809J-eng \
-    twrp_NX809J-userdebug
+    twrp_NX809J-userdebug \
+    twrp_NX809J-aosp_current-eng \
+    twrp_NX809J-aosp_current-userdebug
 
