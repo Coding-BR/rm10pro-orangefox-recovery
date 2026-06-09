@@ -14,7 +14,7 @@
 using android::base::GetProperty;
 
 void OverrideProperty(const char* name, const char* value) {
-    prop_info* pi = reinterpret_cast<prop_info*>(__system_property_find(name));
+    prop_info* pi = const_cast<prop_info*>(__system_property_find(name));
     const size_t valuelen = strlen(value);
 
     if (pi != nullptr) {
