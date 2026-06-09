@@ -32,6 +32,10 @@ PRODUCT_USE_DYNAMIC_PARTITIONS := true
 # Enable Fuse Passthrough
 PRODUCT_PROPERTY_OVERRIDES += persist.sys.fuse.passthrough.enable=true
 
+# magiskboot in the TWRP tree is a 4 KiB-page prebuilt. The stock NX809J reports
+# 4 KiB pages even though Android 16 advertises a 16 KiB max page size.
+PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE := false
+
 # Otacert
 PRODUCT_EXTRA_RECOVERY_KEYS += \
     $(DEVICE_PATH)/security/releasekey
